@@ -2,32 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Classes\Search\Property\PropertySearch;
 use Illuminate\Http\Request;
-use App\Models\Property;
+
+
 
 class PropertyController extends Controller
 {
-    public function filter(Request $request,Property $property)
+    public function filter(Request $request)
     {
+       $query =(new PropertySearch)->filter($request);
 
-        $query=$property->newQuery();
-
-
-        if($request->id)
-        {
-            $query->where('id',$request->id);
-        }
-        if($request->name)
-        {
-            $query->where('name','like','%'. $request->name . '%');
-        }
-        if($request->features)
-        {
-            $query->whereHas('features',function($q) use ($request){
-                $q->whereIn('features.id',$request->features);
-            });
-        }
-
-        return response()->json($query->get());
+       return response()->json($query->get());
     }
 }
